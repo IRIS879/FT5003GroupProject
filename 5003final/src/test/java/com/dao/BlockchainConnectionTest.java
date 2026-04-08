@@ -39,7 +39,6 @@ public class BlockchainConnectionTest {
             fail("Cannot reach RPC endpoint at " + RPC_URL
                     + ". Make sure your local node is running (e.g. `npx hardhat node`) and listening on 8545. Root cause: "
                     + e.getMessage());
-            return;
         }
 
         // 2. Load admin credentials
