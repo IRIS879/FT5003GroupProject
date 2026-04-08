@@ -1,6 +1,10 @@
 /target/
 /.tools/
+/.m2repo/
+/.vscode/
 /node_modules/
 /artifacts/
 /cache/
 /ignition/
+*.log
+.env

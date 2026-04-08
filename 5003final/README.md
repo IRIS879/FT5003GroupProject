@@ -12,7 +12,7 @@ An MVP for a forum-based community fund governance system.
 
 1. Install Hardhat deps: `npm install`.
 2. Start local chain: `npx hardhat node`.
-3. Deploy contract (new terminal): `npx hardhat run scripts/deploy.js --network localhost`.
+3. Deploy & seed treasury (new terminal): `npm run -s deploy:raw`.
 4. Run Java connectivity test:
    - If you already have Java/Maven installed: run `mvn test`
    - Otherwise use the included Maven Wrapper: `mvnw.cmd test` (requires `JAVA_HOME` to be set)
