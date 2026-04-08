@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>io.tmio</groupId>
+  <artifactId>tuweni-units</artifactId>
+  <version>2.4.2</version>
+  <packaging>pom</packaging>
+  <name>units</name>
+  <description>Classes and utilities for working with 256 bit integers.</description>
+  <url>https://github.com/tmio/incubator-tuweni</url>
+  <licenses>
+    <license>
+      <name>The Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <name>Antoine Toulme</name>
+      <email>antoine@lunar-ocean.com</email>
+      <organization>The Machine Consultancy, LLC</organization>
+      <organizationUrl>https://themachine.io</organizationUrl>
+    </developer>
+  </developers>
+  <scm>
+    <connection>scm:https://github.com/tmio/incubator-tuweni.git</connection>
+    <developerConnection>scm:git@github.com:tmio/incubator-tuweni.git</developerConnection>
+    <url>https://github.com/tmio/incubator-tuweni</url>
+  </scm>
+  <issueManagement>
+    <system>github</system>
+    <url>https://www.github.com/tmio/incubator-tuweni/issues</url>
+  </issueManagement>
+  <dependencies>
+    <dependency>
+      <groupId>io.tmio</groupId>
+      <artifactId>tuweni-bytes</artifactId>
+      <version>2.4.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-stdlib-jdk8</artifactId>
+      <version>1.8.21</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.code.findbugs</groupId>
+      <artifactId>jsr305</artifactId>
+      <version>3.0.2</version>
+      <optional>true</optional>
+    </dependency>
+  </dependencies>
+</project>

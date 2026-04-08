@@ -8,6 +8,16 @@ An MVP for a forum-based community fund governance system.
 - **Governance:** Approval Voting with Credit-based Whitelist
 
 ## Getting Started
-1. Install dependencies: `npm install` and `mvn install`.
-2. Start local node: `npx hardhat node`.
-3. Deploy contract: `npx hardhat run scripts/deploy.js --network localhost`.
+> Run all commands from this folder: `C:\Users\Try\Documents\GitHub\FT5003GroupProject\5003final`
+
+1. Install Hardhat deps: `npm install`.
+2. Start local chain: `npx hardhat node`.
+3. Deploy contract (new terminal): `npx hardhat run scripts/deploy.js --network localhost`.
+4. Run Java connectivity test:
+   - If you already have Java/Maven installed: run `mvn test`
+   - Otherwise use the included Maven Wrapper: `mvnw.cmd test` (requires `JAVA_HOME` to be set)
+
+## One-click Demo
+1. Start local chain: `npx hardhat node`
+2. Deploy & seed treasury (recommended): `npm run -s deploy:raw`
+3. Run the scripted CLI demo: `run-demo.cmd`
