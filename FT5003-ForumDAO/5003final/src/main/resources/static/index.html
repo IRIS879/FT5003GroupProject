@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Forum Builder Fund DAO</title>
+  <style>
+    :root {
+      --bg: #0e1116;
+      --panel: #161b22;
+      --panel-2: #1f262f;
+      --border: #2b333e;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --accent: #2f81f7;
+      --good: #2ea043;
+      --warn: #d29922;
+      --bad: #f85149;
+      --chip: #30363d;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+    }
+    header {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--panel);
+    }
+    header h1 { margin: 0; font-size: 18px; font-weight: 600; }
+    header .rules { color: var(--muted); font-size: 12px; }
+    main {
+      display: grid;
+      grid-template-columns: 320px 1fr 360px;
+      gap: 16px;
+      padding: 16px 24px;
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .panel h2 {
+      margin: 0 0 12px 0;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--muted);
+    }
+    .member {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      margin-bottom: 4px;
+    }
+    .member:hover { background: var(--panel-2); }
+    .member.selected { border-color: var(--accent); background: var(--panel-2); }
+    .member .name { font-weight: 600; }
+    .member .addr { color: var(--muted); font-family: ui-monospace, Menlo, monospace; font-size: 11px; }
+    .chip {
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--chip);
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    .chip.good { color: #7ee787; background: #0f2d19; }
+    .chip.bad  { color: #ff9b95; background: #3b1416; }
+    form.submit-form { display: grid; gap: 8px; margin-bottom: 16px; }
+    form.submit-form input {
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 10px;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 13px;
+    }
+    button {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    button:hover { filter: brightness(1.1); }
+    button.ghost { background: transparent; border: 1px solid var(--border); color: var(--text); }
+    button.good { background: var(--good); }
+    button.warn { background: var(--warn); color: #1a1a1a; }
+    button.bad  { background: var(--bad); }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .proposal {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px;
+      margin-bottom: 10px;
+      background: var(--panel-2);
+    }
+    .proposal.eligible { border-color: var(--warn); }
+    .proposal.winner   { border-color: var(--good); }
+    .proposal h3 { margin: 0 0 4px 0; font-size: 14px; }
+    .proposal .meta { color: var(--muted); font-size: 11px; font-family: ui-monospace, Menlo, monospace; }
+    .proposal .counts { margin: 8px 0; display: flex; gap: 12px; font-size: 12px; }
+    .proposal .voters { color: var(--muted); font-size: 11px; font-family: ui-monospace, Menlo, monospace; word-break: break-all; }
+    .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .kv { display: flex; justify-content: space-between; padding: 4px 0; font-size: 12px; }
+    .kv .k { color: var(--muted); }
+    .kv .v { font-family: ui-monospace, Menlo, monospace; word-break: break-all; text-align: right; }
+    .toast-wrap {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-width: 440px;
+      z-index: 100;
+    }
+    .toast {
+      padding: 12px 14px;
+      border-radius: 6px;
+      border-left: 4px solid var(--accent);
+      background: var(--panel);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      font-size: 13px;
+    }
+    .toast.error { border-left-color: var(--bad); }
+    .toast.ok    { border-left-color: var(--good); }
+    .toast .title { font-weight: 600; margin-bottom: 2px; }
+    .toast .msg   { color: var(--muted); font-family: ui-monospace, Menlo, monospace; font-size: 11px; word-break: break-word; }
+    .banner {
+      padding: 8px 12px;
+      background: var(--panel-2);
+      border-radius: 6px;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .banner.bad { color: #ff9b95; background: #3b1416; }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Forum Builder Fund DAO</h1>
+      <div class="rules" id="rules-line">loading rules…</div>
+    </div>
+    <div class="row">
+      <button class="ghost" id="btn-refresh">Refresh</button>
+      <button class="warn" id="btn-reset">Reset round</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="panel">
+      <h2>1 · Members</h2>
+      <div class="banner" id="acting-banner">Acting as: <b id="acting-name">—</b></div>
+      <div id="members"></div>
+    </section>
+
+    <section class="panel">
+      <h2>2 · Proposals &amp; Voting</h2>
+      <form class="submit-form" id="submit-form">
+        <input name="title" placeholder="Title" required />
+        <input name="recipient" placeholder="Recipient 0x…" required />
+        <input name="amountUsdc" type="number" min="1" placeholder="Amount in USDC" required />
+        <button type="submit">Submit proposal (as selected member)</button>
+      </form>
+      <div id="proposals"></div>
+    </section>
+
+    <section class="panel">
+      <h2>3 · Round &amp; Treasury</h2>
+      <div id="tally"></div>
+      <div style="height: 12px"></div>
+      <button class="good" id="btn-execute">Execute on-chain payout</button>
+      <div style="height: 16px"></div>
+      <h2>Treasury</h2>
+      <div id="treasury"></div>
+    </section>
+  </main>
+
+  <div class="toast-wrap" id="toasts"></div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    let state = null;
+    let actingAddress = null;
+
+    async function api(path, opts = {}) {
+      const res = await fetch(path, {
+        headers: { "content-type": "application/json" },
+        ...opts,
+      });
+      const text = await res.text();
+      const body = text ? JSON.parse(text) : null;
+      if (!res.ok) throw new Error(body?.error || `HTTP ${res.status}`);
+      return body;
+    }
+
+    function toast(title, msg, kind = "ok") {
+      const el = document.createElement("div");
+      el.className = `toast ${kind}`;
+      el.innerHTML = `<div class="title">${title}</div><div class="msg">${escapeHtml(msg || "")}</div>`;
+      $("toasts").appendChild(el);
+      setTimeout(() => el.remove(), 6000);
+    }
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, (c) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+      }[c]));
+    }
+
+    function shortAddr(a) { return a ? a.slice(0, 6) + "…" + a.slice(-4) : ""; }
+
+    async function refresh() {
+      state = await api("/api/state");
+      renderRules();
+      renderMembers();
+      renderProposals();
+      renderTally();
+      renderTreasury();
+    }
+
+    function renderRules() {
+      const c = state.constants;
+      $("rules-line").textContent =
+        `quorum ${c.quorum} voters · threshold ${c.threshold} approvals · budget ${c.budgetUsdc} USDC / round`;
+    }
+
+    function renderMembers() {
+      const host = $("members");
+      host.innerHTML = "";
+      if (!actingAddress && state.members.length) {
+        const firstWhitelisted = state.members.find((m) => m.whitelisted);
+        actingAddress = (firstWhitelisted || state.members[0]).address;
+      }
+      for (const m of state.members) {
+        const el = document.createElement("div");
+        el.className = "member" + (m.address === actingAddress ? " selected" : "");
+        el.innerHTML = `
+          <div>
+            <div class="name">${escapeHtml(m.name)}</div>
+            <div class="addr">${shortAddr(m.address)}</div>
+          </div>
+          <span class="chip ${m.whitelisted ? "good" : "bad"}">
+            ${m.whitelisted ? "whitelisted" : "outsider"}
+          </span>
+        `;
+        el.onclick = () => { actingAddress = m.address; renderMembers(); updateActingBanner(); };
+        host.appendChild(el);
+      }
+      updateActingBanner();
+    }
+
+    function updateActingBanner() {
+      const m = state.members.find((x) => x.address === actingAddress);
+      if (!m) return;
+      $("acting-name").textContent = `${m.name} (${shortAddr(m.address)}) — ${m.whitelisted ? "whitelisted" : "OUTSIDER"}`;
+    }
+
+    function renderProposals() {
+      const host = $("proposals");
+      host.innerHTML = "";
+      if (!state.proposals.length) {
+        host.innerHTML = `<div class="banner">No proposals yet.</div>`;
+        return;
+      }
+      const eligible = new Set(state.tally.eligibleIds);
+      const winners = new Set(state.tally.winnerIds);
+      for (const p of state.proposals) {
+        const el = document.createElement("div");
+        let cls = "proposal";
+        if (winners.has(p.id)) cls += " winner";
+        else if (eligible.has(p.id)) cls += " eligible";
+        el.className = cls;
+        el.innerHTML = `
+          <h3>${escapeHtml(p.title)}</h3>
+          <div class="meta">by ${shortAddr(p.submitter)} → ${shortAddr(p.recipient)} · ${p.amountUsdc} USDC</div>
+          <div class="counts">
+            <span><b>${p.approvalCount}</b> approvals</span>
+            ${winners.has(p.id) ? `<span style="color: #7ee787">WINNER</span>` :
+              eligible.has(p.id) ? `<span style="color: #e3b341">eligible</span>` :
+              `<span style="color: var(--muted)">below threshold</span>`}
+          </div>
+          <div class="voters">voters: ${p.voters.map(shortAddr).join(", ") || "(none)"}</div>
+          <div class="row" style="margin-top: 8px">
+            <button data-vote="${p.id}">Approve as selected member</button>
+          </div>
+        `;
+        el.querySelector("button[data-vote]").onclick = () => castVote(p.id);
+        host.appendChild(el);
+      }
+    }
+
+    function renderTally() {
+      const t = state.tally;
+      const c = state.constants;
+      const quorumColor = t.quorumReached ? "#7ee787" : "#ff9b95";
+      $("tally").innerHTML = `
+        <div class="kv"><span class="k">Unique voters</span><span class="v" style="color:${quorumColor}">${t.uniqueVoterCount} / ${c.quorum}</span></div>
+        <div class="kv"><span class="k">Quorum reached</span><span class="v">${t.quorumReached ? "yes" : "NO"}</span></div>
+        <div class="kv"><span class="k">Eligible proposals</span><span class="v">${t.eligibleIds.length}</span></div>
+        <div class="kv"><span class="k">Winners</span><span class="v">${t.winnerIds.length}</span></div>
+        <div class="kv"><span class="k">Remaining budget</span><span class="v">${t.remainingBudgetUsdc} USDC</span></div>
+      `;
+    }
+
+    function renderTreasury() {
+      const tr = state.treasury;
+      const host = $("treasury");
+      if (!tr.available) {
+        host.innerHTML = `
+          <div class="banner bad">
+            Treasury unreachable. Start Hardhat + run <code>npm run -s deploy:raw</code>.
+            <div style="margin-top:4px;font-size:10px">${escapeHtml(tr.error || "")}</div>
+          </div>
+          <div class="kv"><span class="k">Contract</span><span class="v">${shortAddr(tr.contractAddress)}</span></div>
+        `;
+        return;
+      }
+      host.innerHTML = `
+        <div class="kv"><span class="k">Contract</span><span class="v">${shortAddr(tr.contractAddress)}</span></div>
+        <div class="kv"><span class="k">Admin</span><span class="v">${shortAddr(tr.adminAddress)}</span></div>
+        <div class="kv"><span class="k">Balance (Wei)</span><span class="v">${tr.balanceWei}</span></div>
+      `;
+    }
+
+    async function submitProposal(form) {
+      const fd = new FormData(form);
+      try {
+        await api("/api/proposals", {
+          method: "POST",
+          body: JSON.stringify({
+            submitterAddress: actingAddress,
+            title: fd.get("title"),
+            recipient: fd.get("recipient"),
+            amountUsdc: parseInt(fd.get("amountUsdc"), 10),
+          }),
+        });
+        toast("Proposal submitted", "", "ok");
+        form.reset();
+        await refresh();
+      } catch (e) {
+        toast("Submit rejected", e.message, "error");
+      }
+    }
+
+    async function castVote(id) {
+      try {
+        await api(`/api/proposals/${id}/votes`, {
+          method: "POST",
+          body: JSON.stringify({ voterAddress: actingAddress }),
+        });
+        toast("Approval recorded", "", "ok");
+        await refresh();
+      } catch (e) {
+        toast("Vote rejected", e.message, "error");
+      }
+    }
+
+    async function execute() {
+      try {
+        const res = await api("/api/execute", { method: "POST" });
+        toast("On-chain payout executed", `txHash ${res.txHash}`, "ok");
+        await refresh();
+      } catch (e) {
+        toast("Execute failed", e.message, "error");
+      }
+    }
+
+    async function resetRound() {
+      await api("/api/reset", { method: "POST" });
+      toast("Round reset", "", "ok");
+      await refresh();
+    }
+
+    $("submit-form").addEventListener("submit", (e) => { e.preventDefault(); submitProposal(e.target); });
+    $("btn-execute").addEventListener("click", execute);
+    $("btn-reset").addEventListener("click", resetRound);
+    $("btn-refresh").addEventListener("click", refresh);
+    refresh();
+  </script>
+</body>
+</html>
