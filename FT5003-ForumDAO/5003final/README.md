@@ -1,7 +1,7 @@
 # Forum Builder Fund DAO
 
 Off-chain governance engine + on-chain treasury execution for a community
-"forum builder" grants program. Course project for FT5003.
+"forum builder" grants program.
 
 ## What it does
 
